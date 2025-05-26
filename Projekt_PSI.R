@@ -34,6 +34,11 @@ clean_corpus <- function(corpus) {
   return(corpus)
 }
 
+# Wczytaj dane
+data <- read.csv("Hotel_Reviews.csv", sep = ";", stringsAsFactors = FALSE, encoding = "UTF-8")
+data <- data %>% select(Hotel_Name, Negative_Review, Positive_Review)
+
+
 # Tworzenie i czyszczenie korpusów
 corpus_negative <- VCorpus(VectorSource(data$Negative_Review)) %>% clean_corpus()
 corpus_positive <- VCorpus(VectorSource(data$Positive_Review)) %>% clean_corpus()
@@ -72,11 +77,6 @@ top_terms_by_topic_LDA <- function(input_text, plot = TRUE, k = number_of_topics
 }
 
 
-# Wczytaj dane
-data <- read.csv("Hotel_Reviews.csv", sep = ";", stringsAsFactors = FALSE, encoding = "UTF-8")
-data <- data %>% select(Hotel_Name, Negative_Review, Positive_Review)
-
-
 # Przygotowanie dokumentów do LDA
 cleaned_neg_docs <- sapply(corpus_negative, as.character)
 cleaned_pos_docs <- sapply(corpus_positive, as.character)
@@ -100,12 +100,12 @@ v_pos <- sort(rowSums(m_pos), decreasing = TRUE)
 tdm_df_pos <- data.frame(word = names(v_pos), freq = v_pos) %>%
   filter(!word %in% c("negative", "positive"))
 
-# 🌩️ Chmura słów – NEGATIVE
+# Chmura słów – NEGATIVE
 wordcloud(words = tdm_df_neg$word, freq = tdm_df_neg$freq, min.freq = 7,
           colors = brewer.pal(8, "Dark2"))
 title("Top słowa w recenzjach NEGATYWNYCH")
 
-# 🌩️ Chmura słów – POSITIVE
+# Chmura słów – POSITIVE
 wordcloud(words = tdm_df_pos$word, freq = tdm_df_pos$freq, min.freq = 7,
           colors = brewer.pal(8, "Paired"))
 title("Top słowa w recenzjach POZYTYWNYCH")
